@@ -1,0 +1,16 @@
+{
+  "name": "모심 — 부모님 병원 동행",
+  "short_name": "모심",
+  "description": "부모님 병원 가는 날, 동행을 더해요 (프로토타입)",
+  "lang": "ko",
+  "start_url": "screens/start.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F1F3F6",
+  "theme_color": "#0462D1",
+  "icons": [
+    { "src": "assets/app-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
