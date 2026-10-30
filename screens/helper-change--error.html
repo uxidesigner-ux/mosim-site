@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=375, initial-scale=1">
+<title>시간 연장 묻기</title>
+<link id="tokens" rel="stylesheet" href="../tokens.css"><link rel="stylesheet" href="../components.css"><script src="../palette.js"></script>
+</head>
+<body class="has-cta plain">
+<header class="appbar"><a class="appbar-btn" href="helper-live.html" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a><h1 class="appbar-title">시간 연장</h1><span></span></header>
+<main class="page">
+  <div class="field"><span class="label">사유 </span>
+    <div class="chips is-wrap"><button class="chip is-selected">진료 대기 길어짐</button><button class="chip">교통 지연</button><button class="chip">추가 도움</button><button class="chip">기타</button></div>
+  </div>
+  <div class="field"><label class="label" for="m">메모</label><input class="input" id="m" value="진료 대기가 30분 길어졌어요"></div>
+  <div class="field is-error"><label class="label" for="t">귀가 예상</label><input class="input" id="t" value="11:30"><p class="field-msg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5M12 16v.5"/></svg>원래 귀가 12:00보다 늦은 시각을 골라 주세요</p></div>
+  <div class="field"><label class="label" for="a">추가 시간</label><input class="input" id="a" value="—"></div>
+  <div class="field"><label class="label" for="c">추가 비용 예상</label><input class="input" id="c" value="—"></div>
+  <p class="info"><svg class="is-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="4.5" width="13" height="16" rx="2"/><path d="M9 4.5h6V7H9zM9 12h6M9 15.5h4"/></svg><span>보호자가 승인하기 전까지는 원래 시각 12:00까지가 기준이에요</span></p>
+</main>
+<div class="cta"><a class="btn primary full" href="helper-change--done.html">보호자에게 묻기</a></div>
+</body></html>

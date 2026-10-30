@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>아이콘 시안 비교</title>
+<style>
+:root { --bg:#f3f4f6; --card:#fff; --text:#16181d; --sub:#5b6170; --line:#e3e5ea; --brand:#0462D1; }
+@media (prefers-color-scheme: dark) { :root { --bg:#111317; --card:#1a1d23; --text:#eceef2; --sub:#a3a9b6; --line:#2a2e36; --brand:#5b9bf0; } }
+body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,"Apple SD Gothic Neo",sans-serif; line-height:1.6; }
+main { max-width:1280px; margin:0 auto; padding:32px 16px 64px; }
+h1 { font-size:26px; margin:0 0 6px; } h2 { font-size:18px; margin:32px 0 10px; }
+p.lead { color:var(--sub); margin:0 0 20px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 20px; margin:0 0 16px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
+img { width:100%; height:auto; border-radius:10px; border:1px solid var(--line); display:block; }
+.scroll { overflow-x:auto; } .scroll img { min-width:900px; }
+ul { margin:6px 0 0; padding-left:18px; } li { margin:4px 0; }
+.tag { display:inline-block; font-size:13px; padding:2px 10px; border-radius:999px; background:var(--bg); color:var(--sub); margin-bottom:6px; }
+</style></head>
+<body><main>
+<h1>아이콘 시안 — 컬러 일러스트 vs 선 아이콘</h1>
+<p class="lead">대표 화면 6장을 같은 내용으로 두 번 찍었어요. 왼쪽이 지금(Fluent 컬러 일러스트), 오른쪽이 시안(선 아이콘 + 브랜드 연한 원). 기존 51장과 파운데이션은 바꾸지 않았어요.</p>
+
+<div class="grid">
+  <div class="card"><span class="tag">좋아지는 점</span><ul>
+    <li>뜻이 정확해져요 — 녹음은 마이크, 진료는 병원 십자, 보청기는 귀. 지금은 녹음 자리에 계산기처럼 보이는 그림, 진료 자리에 클립보드가 들어가 있어요.</li>
+    <li>의료·신뢰 서비스의 차분한 톤과 맞아요. 화면마다 색이 튀는 점이 줄어 숫자·시각이 먼저 읽혀요.</li>
+    <li>사진(도우미 얼굴)과 그림 질감이 부딪히지 않아요.</li>
+  </ul></div>
+  <div class="card"><span class="tag">잃는 점</span><ul>
+    <li>따뜻함이 줄어요. 특히 어머니 안내(parent-guide)는 컬러 그림이 더 친근하고 알아보기 쉬워요.</li>
+    <li>작은 선 아이콘은 서로 비슷해 보일 수 있어요 — 약 아이콘이 처음엔 링크 기호처럼 보여 한 번 고쳤어요.</li>
+    <li>하네스 원칙 10번(사물 = 컬러 일러스트)을 바꿔야 하고, 51장 전체에 적용해야 일관돼요.</li>
+  </ul></div>
+  <div class="card"><span class="tag">추천</span>
+    <p style="margin:0">보호자·도우미 화면은 <b>선 아이콘</b>, 어머니가 보는 문자 링크 화면(parent-consent·parent-guide)만 <b>컬러 일러스트 유지</b>. 어머니 화면은 앱 밖 한 장짜리라 톤이 달라도 섞여 보이지 않고, 큰 글자와 함께 알아보기 쉬운 쪽이 우선이에요.</p>
+  </div>
+</div>
+
+<h2>보호자 홈 · 도움요청 상세 · 동행 기록</h2>
+<div class="card scroll"><img src="icon-shots/compare-1.png" alt="home, helper-request, report 화면의 지금과 시안 비교"></div>
+<h2>도우미 홈 · 오늘 동행(약국) · 어머니 안내</h2>
+<div class="card scroll"><img src="icon-shots/compare-2.png" alt="helper-home, live-pharmacy, parent-guide 화면의 지금과 시안 비교"></div>
+<h2>확대 — 도움요청의 '부탁한 도움'</h2>
+<div class="card"><img src="icon-shots/zoom-helper-request.png" alt="부탁한 도움 목록의 아이콘 확대 비교"></div>
+<p class="lead">시안 화면은 out/screens-line/ 에서 직접 열어 볼 수 있어요(링크는 기존 화면으로 이어짐). 스타일은 out/proposals/line-icons.css 3줄입니다.</p>
+</main></body></html>

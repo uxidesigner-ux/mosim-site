@@ -1,0 +1,3 @@
+.row-art.is-line { width: 44px; height: 44px; border-radius: var(--r-pill); background: var(--c-brand-tint); color: var(--c-brand-tint-text); }
+.row-art.is-line svg { width: 22px; height: 22px; }
+.info svg.is-line { color: var(--c-brand-tint-text); }

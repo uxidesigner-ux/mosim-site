@@ -1,0 +1,62 @@
+[
+ {
+  "slot": "helper-jeongmi",
+  "file": "assets/photos/helper-jeongmi.jpg",
+  "title": "도우미 이정미 프로필 — 50대 후반 한국 여성, 크림 니트, 밝은 거실",
+  "author": "AI 생성 (Figma generate_image · gpt-image-2.5-flare)",
+  "license": "생성 이미지 — 실존 인물 아님",
+  "source": "generated",
+  "url": "",
+  "generated": "2026-10-30"
+ },
+ {
+  "slot": "helper-hyeonsuk",
+  "file": "assets/photos/helper-hyeonsuk.jpg",
+  "title": "도우미 최현숙 프로필 — 60대 초반 한국 여성, 토프 블라우스",
+  "author": "AI 생성 (Figma generate_image · gpt-image-2.5-flare)",
+  "license": "생성 이미지 — 실존 인물 아님",
+  "source": "generated",
+  "url": "",
+  "generated": "2026-10-30"
+ },
+ {
+  "slot": "helper-minho",
+  "file": "assets/photos/helper-minho.jpg",
+  "title": "도우미 정민호 프로필 — 40대 후반 한국 남성, 데님 셔츠",
+  "author": "AI 생성 (Figma generate_image · gpt-image-2.5-flare)",
+  "license": "생성 이미지 — 실존 인물 아님",
+  "source": "generated",
+  "url": "",
+  "generated": "2026-10-30"
+ },
+ {
+  "slot": "companion-walk",
+  "file": "assets/photos/companion-walk.jpg",
+  "title": "어머니와 동행자가 팔짱 끼고 공원 길을 걷는 모습",
+  "author": "AI 생성 (Figma generate_image · gpt-image-2.5-flare)",
+  "license": "생성 이미지 — 실존 인물 아님",
+  "source": "generated",
+  "url": "",
+  "generated": "2026-10-30"
+ },
+ {
+  "slot": "clinic-lobby",
+  "file": "assets/photos/clinic-lobby.jpg",
+  "title": "동네 의원 대기실 — 나무 벽, 베이지 소파, 접수대",
+  "author": "AI 생성 (Figma generate_image · gpt-image-2.5-flare)",
+  "license": "생성 이미지 — 실존 인물 아님",
+  "source": "generated",
+  "url": "",
+  "generated": "2026-10-30"
+ },
+ {
+  "slot": "receipt-photo",
+  "file": "assets/photos/receipt-photo.jpg",
+  "title": "병원 대기 번호표(0059)를 든 손",
+  "author": "AI 생성 (Figma generate_image · gpt-image-2.5-flare)",
+  "license": "생성 이미지 — 실존 인물 아님",
+  "source": "generated",
+  "url": "",
+  "generated": "2026-10-30"
+ }
+]
