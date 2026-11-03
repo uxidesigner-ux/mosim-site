@@ -164,3 +164,14 @@ home-booked ─▶ booking-cancel-late ─▶ booking-cancel-late--confirm ─�
 함께 고친 결함: 보호자 진행 화면(`live`·`live--error`·`live-pharmacy`)의 위치 지도가 전역 아이콘 규칙(24px)에 눌려 점처럼 보이던 것을 블록 너비로 바로잡았다.
 
 새 부품 변형: `.done.is-warning`(연결 끊김·전달 안 됨처럼 되돌릴 수 있는 문제를 알리는 주의판) · 바텀시트를 아래에 붙이지 않고 8px 띄워 모서리를 카드와 같은 반경 하나로(반경 종류 4개 유지) · 어두운 막을 머리줄 위로(z 40/41).
+
+## Figma 반영 (2026-11-03)
+
+- 파일: [Figma — mosim](https://www.figma.com/design/Ys2YFem6ycsTyVtaJuZtNh/mosim) · Screens 페이지(전체 63장)
+- 새 섹션 2개: '예상 밖 — 무료 시간 지나 취소'(4장) · '예상 밖 — 도우미가 안 올 때'(3장). 상태 화면 5장은 기본 화면 바로 옆에 둔다(`pay` 옆 `pay--error`·`pay--progress`, `live--error` 옆 `live-late`, `change-request--done` 옆 `change-request--error`, `helper-live` 옆 `helper-live--error`).
+- 고친 화면 3장(`confirm`·`booking-cancel`·`booking-cancel-done`)은 다시 조립하고 들어오는 링크를 다시 이었다.
+- 새 부품: Done banner `Tone=Warning`(앞 아이콘 바꾸기 — `wifi-off`·`alert`) · Sheet(확인 시트 — 제목·설명·결정·그대로 두기) · 선 아이콘 4개(`message`·`wifi`·`wifi-off`·`alert`, 모두 32종).
+- 프로토타입 시작점 7~12: 도우미가 안 올 때 · 무료 시간 지나 취소 · 결제가 안 될 때 · 결제 결과를 모를 때 · 병원에서 연결이 끊길 때 · 승인이 전달되지 않을 때.
+- 다른 사람 화면으로 넘어가는 지점: 취소 완료의 '이정미 님에게 알렸어요' → 도우미 취소 알림 · 도우미 연결 끊김 배너 → 보호자 '늦게 받은 기록'. 확인 시트 바깥(어두운 막)을 누르면 그대로 두기.
+- 함께 고친 Figma 결함(원래 있던 것): 흰 바탕 화면의 하단 버튼 띠가 회색이라 보조 버튼이 배경에 묻히던 것(HTML `.plain .cta`처럼 흰 띠로) · 키 큰 화면에서 하단 버튼·탭 막대가 프레임 밖으로 밀려 잘리던 것.
+- 한계: Figma는 한글을 글자 단위로 줄바꿈해 HTML(어절 단위)과 줄 나뉨이 다를 수 있다. 큰 제목 3개(`booking-cancel-late`·`--confirm`·`rematch-done`)만 어절에서 직접 나눴다. 글꼴은 Pretendard 대신 Noto Sans KR.
