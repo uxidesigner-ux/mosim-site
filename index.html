@@ -60,6 +60,10 @@
       <p class="label">누구의 하루부터 볼까요</p>
       <ul class="flows" id="flows"></ul>
     </div>
+    <div>
+      <p class="label">예상 밖 상황</p>
+      <ul class="flows" id="flows-x"></ul>
+    </div>
     <div class="qr">
       <div id="qr" aria-hidden="true"></div>
       <p>휴대폰 카메라로 찍으면 앱처럼 전체 화면으로 열려요.</p>
@@ -83,20 +87,29 @@
     ["helper-join", "신규 도우미 최현숙", "가입과 서류 확인"],
     ["report", "보호자 · 끝난 뒤", "기록 확인·결제·후기"]
   ];
+  var EXCEPTIONS = [
+    ["noshow", "도우미가 안 와요", "만남 10분 지남 → 대신 갈 분 확정"],
+    ["booking-cancel-late", "무료 시간 지나 취소", "수수료 먼저 보고 한 번 더 확인"],
+    ["pay--error", "결제가 안 돼요", "카드 거절 → 다른 카드로"],
+    ["helper-live--error", "병원에서 연결이 끊겨요", "기록은 휴대폰에 먼저, 늦게 받은 표시"]
+  ];
   var frame = document.getElementById("app"), list = document.getElementById("flows"), now = document.getElementById("now");
-  FLOWS.forEach(function (f) {
-    var li = document.createElement("li"), b = document.createElement("button");
-    b.className = "flow"; b.type = "button"; b.dataset.id = f[0];
-    b.innerHTML = "<strong></strong><span></span>"; b.firstChild.textContent = f[1]; b.lastChild.textContent = f[2];
-    b.addEventListener("click", function () { go(f[0]); });
-    li.appendChild(b); list.appendChild(li);
-  });
+  function render(items, ul) {
+    items.forEach(function (f) {
+      var li = document.createElement("li"), b = document.createElement("button");
+      b.className = "flow"; b.type = "button"; b.dataset.id = f[0];
+      b.innerHTML = "<strong></strong><span></span>"; b.firstChild.textContent = f[1]; b.lastChild.textContent = f[2];
+      b.addEventListener("click", function () { go(f[0]); });
+      li.appendChild(b); ul.appendChild(li);
+    });
+  }
+  render(FLOWS, list); render(EXCEPTIONS, document.getElementById("flows-x"));
   function go(id) { frame.src = "screens/" + id + ".html"; }
   function mark() {
     var id = "";
     try { id = frame.contentWindow.location.pathname.split("/").pop().replace(/\.html$/, ""); now.textContent = frame.contentDocument.title; } catch (e) {}
     if (id) history.replaceState(null, "", "#" + id);
-    list.querySelectorAll(".flow").forEach(function (b) { b.setAttribute("aria-current", b.dataset.id === id ? "true" : "false"); });
+    document.querySelectorAll(".flows .flow").forEach(function (b) { b.setAttribute("aria-current", b.dataset.id === id ? "true" : "false"); });
   }
   frame.addEventListener("load", mark);
   document.getElementById("reset").addEventListener("click", function () {

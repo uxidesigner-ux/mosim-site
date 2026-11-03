@@ -128,8 +128,9 @@ body.has-cta .page, body:has(> .cta) .page { padding-bottom: calc(var(--h-btn) +
 .tab[aria-current="page"] { color: var(--c-text-1); }
 
 /* 바텀시트 */
-.dim { position: fixed; inset: 0; background: var(--c-overlay); }
-.sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--c-surface); box-shadow: var(--shadow-2); border-radius: var(--r-l) var(--r-l) 0 0; padding: var(--block-pad) var(--page-x) calc(var(--block-pad) + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: var(--stack-m); }
+.dim { position: fixed; inset: 0; z-index: 40; background: var(--c-overlay); }   /* 머리줄(sticky, z 5)까지 덮는다 */
+/* 아래에 붙지 않고 살짝 띄운 시트 — 모서리를 카드와 같은 반경 하나로 */
+.sheet { position: fixed; left: var(--stack-s); right: var(--stack-s); bottom: calc(var(--stack-s) + env(safe-area-inset-bottom)); background: var(--c-surface); box-shadow: var(--shadow-2); border-radius: var(--r-l); padding: var(--block-pad); display: flex; flex-direction: column; gap: var(--stack-m); z-index: 41; }
 
 /* 준비물 체크 행 — 끝낸 항목은 옅게 */
 .row-lead.is-done { background: var(--c-brand-tint); color: var(--c-brand-tint-text); }
@@ -278,3 +279,11 @@ input.input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .done a { color: inherit; text-decoration: none; display: block; }
 .demo-reset { display: flex; align-items: center; justify-content: space-between; gap: var(--stack-s); flex-wrap: wrap; }
 .demo-reset .btn { background: var(--c-surface); box-shadow: inset 0 0 0 1px var(--c-line-strong); }
+
+/* 지도 카드: 전역 svg 24px 규칙에 눌려 점처럼 보이던 것을 블록 너비로 */
+.block > svg[role="img"] { width: 100%; height: auto; aspect-ratio: 2 / 1; background: var(--c-bg); border-radius: var(--r-m); color: var(--c-brand); }
+
+/* 결과 한 줄의 주의판 — 연결 끊김·전달 안 됨처럼 되돌릴 수 있는 문제(파괴적 오류는 빨강 문구로 칸 옆에) */
+.done.is-warning { background: var(--c-warning-tint); color: var(--c-warning-tint-text); }
+.done:has(> svg) { display: flex; align-items: flex-start; gap: var(--stack-s); }
+.done > svg { flex: none; margin-top: 1px; }

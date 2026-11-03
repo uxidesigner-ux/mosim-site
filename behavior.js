@@ -3,13 +3,15 @@
    - 목록 검색·걸러 보기
    - 하단 버튼을 누를 때 입력 검사 (오류는 같은 칸에 경고 아이콘 + 문구, 칸의 설명으로 이어 읽힘)
    - 화면 사이 이어지는 값 (어머니 동의 → 동의 완료, 도우미 연장 요청 → 보호자 승인 화면,
-     도우미 귀가 기록의 전달사항 → 보호자 동행 기록, 도우미 단계 기록 → 보호자 진행 화면 …)
+     도우미 귀가 기록의 전달사항 → 보호자 동행 기록, 도우미 단계 기록 → 보호자 진행 화면,
+     취소 사유 → 도우미 취소 알림, 고른 대신 갈 도우미 → 확정 화면 …)
+   - 예상 밖 상황: 결제 카드 고르기, 수수료 확인 시트, 연결이 끊긴 채 단계 기록
    상태는 이 브라우저의 localStorage에만 남고 12시간 뒤 지워진다. 다른 탭에서 바뀌면 그 값을 쓰는 화면을 다시 그린다.
    앱 첫 화면의 '데모 처음으로'나 주소 끝 ?reset=1 로 지운다. */
 (function () {
   "use strict";
   var PAGE = (location.pathname.split("/").pop() || "").replace(/\.html$/, "");
-  var BASE = PAGE.replace(/--(error|done)$/, "");
+  var BASE = PAGE.replace(/--[a-z]+$/, "");
   var K = "mosim:", TTL = 12 * 36e5;
   var CALM = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var PHONE = matchMedia("(pointer: coarse)").matches;
@@ -272,6 +274,7 @@
       return true;
     },
     "booking-cancel": function () { var c = $(".chip.is-selected"); save("cancel", c ? txt(c) : ""); return true; },
+    "booking-cancel-late": function () { var c = $(".chip.is-selected"); save("cancel", c ? txt(c) : ""); return true; },
     "change-request": function () { var e = load("extension", null); save("approved", { id: e ? e.id : 0, at: later(e ? e.at : "10:20", 6) }); return true; },
     "helper-finish": function () {
       save("share", $$(".row").filter(function (r) { var s = $(".switch", r); return s && s.getAttribute("aria-checked") === "true"; })
@@ -317,6 +320,7 @@
   // 승인은 지금 연장 요청의 id와 같을 때만 '승인했어요'로 본다
   var ap = load("approved", null), apNow = ex && ap && ap.id === ex.id ? ap.at : null;
   if (PAGE === "change-request--done") { var d = $(".done"); if (d && apNow) d.textContent = apNow + " 승인했어요 — 귀가 예상 " + ex.until; }
+  if (PAGE === "change-request--error" && ex) { var fail = $('.done[role="alert"] span'); if (fail) fail.textContent = fail.textContent.replace(/^\d+:\d+/, later(ex.at, 6)); }
   if (PAGE === "helper-change--done") { var d2 = $(".done"); if (d2 && ex) d2.textContent = ex.at + " 보냈어요 — " + (apNow ? apNow + " 김수진 님이 승인했어요" : "보호자 승인을 기다려요"); }
 
   // 어머니 동의: 고른 값이 동의 완료 화면과 보호자 확인 화면에 그대로
@@ -326,7 +330,7 @@
 
   // 취소 사유 · 후기 · 다시 확인 내용이 다음 화면에
   var cancel = load("cancel", null);
-  if (cancel && PAGE === "booking-cancel-done") $$(".row-sub").forEach(function (p) { if (p.textContent.indexOf("사유") === 0) p.textContent = "사유 · " + cancel; });
+  if (cancel && /^(booking-cancel-done|booking-cancel-late-done|helper-cancelled)$/.test(PAGE)) $$(".row-sub").forEach(function (p) { if (p.textContent.indexOf("사유") === 0) p.textContent = "사유 · " + cancel; });
   var rv = load("review", null);
   if (rv && PAGE === "review--done") { var pub = input(field("공개 후기")); if (pub) pub.value = rv.text; var rr = $(".rating"); if (rr) $$("button, svg", rr).forEach(function (s, i) { s.classList.toggle("is-on", i < rv.stars); }); }
 
@@ -431,6 +435,65 @@
         if (pg) pg.insertBefore(b, pg.firstChild);
       }
     }
+  }
+
+  /* ── 5. 예상 밖 상황 ── */
+  // 결제 안 됨: 카드를 고르면 버튼 하나의 글자가 그 카드로 바뀐다(다시 시도 / 다른 카드)
+  if (PAGE === "pay--error") {
+    var paySeg = $(".seg"), payNote = paySeg && paySeg.nextElementSibling, payBtn = $(".cta .btn");
+    var payPick = function () {
+      var on = paySeg && $(".seg-item.is-selected", paySeg), last4 = on ? txt(on).slice(-4) : "5678", same = last4 === "1234";
+      if (payBtn) payBtn.textContent = same ? "같은 카드로 다시 결제" : last4 + " 카드로 56,800원 결제";
+      if (payNote) payNote.textContent = same ? "카드사에서 한도 초과로 막았어요 · 한도를 늘렸다면 다시 해 보세요" : "등록해 둔 다른 카드예요";
+    };
+    if (paySeg) paySeg.addEventListener("click", payPick);
+    payPick();
+  }
+
+  // 수수료 확인 시트: 열리면 되돌리기 쉬운 '그대로 두기'에 포커스, Esc·바깥을 누르면 그대로 두고 돌아간다
+  var sheet = $('.sheet[role="alertdialog"]');
+  if (sheet) {
+    var keep = $$(".btn", sheet).pop(), back = function () { location.href = keep.getAttribute("href"); };
+    keep.focus();
+    addEventListener("keydown", function (e) { if (e.key === "Escape") back(); });
+    var dim = $(".dim"); if (dim) dim.addEventListener("click", back);
+  }
+
+  // 대신 갈 도우미: 고른 분이 확정 화면에 그대로(이름·사진·도착 예상)
+  $$("[data-pick]").forEach(function (b) {
+    b.addEventListener("click", function () { var v = b.dataset.pick.split("|"); save("rematch", { name: v[0], photo: v[1], eta: v[2], arrive: v[3] }); });
+  });
+  var rm = load("rematch", null);
+  if (rm && PAGE === "rematch-done") {
+    var rh = $(".hero .title"), rl = $(".hero .lead"), rr = $$(".row")[0], img = rr && $("img", rr);
+    var hm = rm.eta.split(":");
+    if (rh) rh.textContent = rm.name + " 님이 " + +hm[0] + "시\u00a0" + +hm[1] + "분에 도착해요";   // '10시 2분'이 두 줄로 갈리지 않게
+    if (rl) rl.textContent = "어머니 댁 현관 앞 · 병원에는 " + korTime(rm.arrive).replace(/^오전 /, "") + "쯤 도착해요";
+    if (img) { img.src = "../assets/photos/" + rm.photo + ".jpg"; img.alt = "도우미 " + rm.name; }
+    if (rr) { $(".row-title", rr).textContent = rm.name + " 도우미로 확정했어요"; if (rm.name === "최현숙") $(".row-sub", rr).textContent = "본인 확인 완료 · 자격증은 확인 전 · 조건은 그대로"; }
+  }
+
+  // 연결이 끊긴 동행 기록: 기록은 이 휴대폰에만 남고(보내기 전), 보호자 화면에는 아직 가지 않는다
+  if (PAGE === "helper-live--error") {
+    var obtn = $$(".block .btn.primary")[0], oitems = $$(".timeline .tl-item"), ocount = $$(".block-head .block-note").pop(), obusy = false;
+    var onow = function () { return oitems.findIndex(function (li) { return li.classList.contains("is-now"); }); };
+    var olabel = function () { var n = oitems[onow() + 1]; obtn.textContent = n ? txt($(".tl-body p", n)) + " 기록" : "귀가 기록 쓰기"; };
+    if (obtn) { obtn.type = "button"; olabel();
+      obtn.addEventListener("click", function () {
+        var i = onow(), next = oitems[i + 1];
+        if (obusy) return;
+        if (!next) { location.href = "helper-finish.html"; return; }
+        obusy = true; obtn.setAttribute("aria-disabled", "true");
+        setTimeout(function () { obusy = false; obtn.removeAttribute("aria-disabled"); }, 1200);
+        var name = txt($(".tl-body p", next)), si = stepIdx(name), time = si >= 0 ? SCENE[si][1] : later(sceneNow(), 5);
+        oitems[i].classList.remove("is-now");
+        next.classList.add("is-now"); $(".tl-date", next).textContent = time + " · 보내기 전";
+        $$(".tl-body p", next).forEach(function (q) { q.className = ""; });
+        var waiting = $$(".tl-date", oitems[0].parentElement).filter(function (d) { return /보내기 전/.test(d.textContent); }).length;
+        if (ocount) ocount.textContent = "보내기 전 " + waiting + "개";
+        toast("이 휴대폰에 기록했어요 · 연결되면 " + time + "로 보내요");
+        olabel();
+      }); }
   }
 
   // 사진 올리기: 고른 뒤에도 다시 고를 수 있게 입력은 그대로 두고, 옆에 '올렸어요'만 붙인다
