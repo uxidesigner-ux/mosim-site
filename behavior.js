@@ -149,8 +149,8 @@
       return true;
     },
     "request-new": function () {
-      var need = ["날짜", "만남 시각", "만남 장소", "병원", "진료 예약 시각"];
-      for (var i = 0; i < need.length; i++) if (!val(need[i])) return setError(field(need[i]), need[i] + "을(를) 적어 주세요"), false;
+      var need = [["날짜", "날짜를 적어 주세요"], ["만남 시각", "만날 시각을 적어 주세요"], ["만남 장소", "만날 곳을 적어 주세요"], ["병원", "병원 이름을 적어 주세요"], ["진료 예약 시각", "진료 예약 시각을 적어 주세요"]];
+      for (var i = 0; i < need.length; i++) if (!val(need[i][0])) return setError(field(need[i][0]), need[i][1]), false;
       var meet = minutes(val("만남 시각")), appt = minutes(val("진료 예약 시각"));
       if (meet == null) return setError(field("만남 시각"), "‘오전 9시 30분’처럼 적어 주세요"), false;
       if (appt == null) return setError(field("진료 예약 시각"), "‘오전 10시’처럼 적어 주세요"), false;
@@ -274,8 +274,12 @@
       label();
     };
     saved.forEach(function (s) { advance(s.time, true); });
+    var busy = false;   // 연타 방지: 한 번 기록하면 잠깐 잠근다(두 단계가 한 번에 넘어가지 않게)
     if (btn) { btn.type = "button"; label();
       btn.addEventListener("click", function () {
+        if (busy) return;
+        busy = true; btn.disabled = true; btn.setAttribute("aria-busy", "true");
+        setTimeout(function () { busy = false; btn.disabled = false; btn.removeAttribute("aria-busy"); }, 1200);
         var i = nowIdx(), last = i === items.length - 1;
         if (last) { location.href = "helper-finish.html"; return; }
         var cur = $(".tl-body p", items[i + 1]); var name = cur ? cur.textContent.trim() : "";
