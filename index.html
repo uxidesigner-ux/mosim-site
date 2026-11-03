@@ -9,13 +9,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/app-icon-192.png">
 <link rel="apple-touch-icon" href="assets/app-icon-192.png">
-<link id="tokens" rel="stylesheet" href="tokens.css">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><link id="tokens" rel="stylesheet" href="tokens.css">
 <script>
   // 휴대폰에서는 앱처럼 바로 그 화면을 연다 (#home 처럼 화면 id를 붙이면 그 화면부터)
   (function () {
     var id = (location.hash || "").replace(/^#/, "") || "start";
     var phone = matchMedia("(max-width: 600px)").matches || (matchMedia("(pointer: coarse)").matches && Math.min(screen.width, screen.height) < 600);
-    if (phone && !/[?&]frame=1/.test(location.search)) location.replace("screens/" + encodeURIComponent(id) + ".html");
+    if (phone && !/[?&]frame=1/.test(location.search)) location.replace("screens/" + encodeURIComponent(id) + ".html" + (/[?&]reset=1/.test(location.search) ? "?reset=1" : ""));
   })();
 </script>
 <style>
@@ -73,7 +73,6 @@
     <p class="now" id="now" aria-live="polite"></p>
   </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   var FLOWS = [
     ["start", "처음 시작", "부탁하러 왔나, 일하러 왔나"],
@@ -106,6 +105,11 @@
   });
   var start = (location.hash || "").replace(/^#/, "");
   if (start) go(start);
-  try { new QRCode(document.getElementById("qr"), { text: location.href.split("#")[0].split("?")[0], width: 192, height: 192, colorDark: "#1A2128", colorLight: "#FFFFFF" }); } catch (e) { document.querySelector(".qr").hidden = true; }
+  // QR 라이브러리는 화면을 다 그린 뒤에 받는다(휴대폰은 위에서 바로 넘어가므로 받지 않는다)
+  var qrBox = document.querySelector(".qr"), qs = document.createElement("script");
+  qs.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"; qs.async = true;
+  qs.onload = function () { try { new QRCode(document.getElementById("qr"), { text: location.href.split("#")[0].split("?")[0], width: 192, height: 192, colorDark: "#1A2128", colorLight: "#FFFFFF" }); } catch (e) { qrBox.hidden = true; } };
+  qs.onerror = function () { qrBox.hidden = true; };
+  document.body.appendChild(qs);
 </script>
 </body></html>

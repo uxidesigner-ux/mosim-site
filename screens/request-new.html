@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>동행 부탁하기</title><meta name="theme-color" content="#F1F3F6"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="모심"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../assets/app-icon-192.png">
-<link id="tokens" rel="stylesheet" href="../tokens.css"><link rel="stylesheet" href="../components.css"><script src="../palette.js"></script><script src="../behavior.js" defer></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><link id="tokens" rel="stylesheet" href="../tokens.css"><link rel="stylesheet" href="../components.css"><script src="../palette.js"></script><script src="../behavior.js" defer></script>
 </head>
 <body class="plain has-cta">
 <header class="appbar"><a class="appbar-btn" href="home.html" aria-label="뒤로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a><h1 class="appbar-title">동행 부탁하기</h1><span></span></header>
@@ -10,10 +10,10 @@
     <div class="block is-list"><a class="row" href="parent-info.html"><span class="avatar"><img src="../assets/fluent/mother.svg" alt=""></span><div class="row-main"><p class="row-title">어머니 박영순</p><p class="row-sub">무릎 관절염 · 보청기 · 정보 보기</p></div><span class="row-trail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></a></div>
   </div>
   <div class="field"><label class="label" for="d">날짜</label><input class="input" id="d" value="11월 5일(목)"></div>
-  <div class="field"><label class="label" for="t">만남 시각</label><input class="input" id="t" value="오전 9시 30분"></div>
+  <div class="field"><label class="label" for="t">만남 시각</label><input class="input" id="t" type="time" step="300" value="09:30"></div>
   <div class="field"><label class="label" for="p">만남 장소</label><input class="input" id="p" value="자택(상계동) 현관 앞"></div>
   <div class="field"><label class="label" for="h">병원</label><input class="input" id="h" value="노원 바른정형외과의원"></div>
-  <div class="field"><label class="label" for="r">진료 예약 시각</label><input class="input" id="r" value="오전 10시"></div>
+  <div class="field"><label class="label" for="r">진료 예약 시각</label><input class="input" id="r" type="time" step="300" value="10:00"></div>
   <div class="field"><span class="label">부탁할 도움</span>
     <div class="block is-list">
     <div class="row"><span class="row-art is-line"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="4.5" width="13" height="16" rx="2"/><path d="M9 4.5h6V7H9zM9 12h6M9 15.5h4"/></svg></span><div class="row-main"><p class="row-title">접수</p></div><span class="row-trail"><button class="check" role="checkbox" aria-checked="true" aria-label="접수"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6.5 12.5 3.5 3.5 7.5-8"/></svg></span></button></span></div>
