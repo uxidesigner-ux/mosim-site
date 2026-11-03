@@ -29,33 +29,46 @@
   function field(label) { return $$(".field").filter(function (f) { var l = $(".label", f); return l && l.textContent.trim().indexOf(label) === 0; })[0]; }
   function input(f) { return f && $("input.input, textarea.input", f); }
   function val(label) { var i = input(field(label)); return i ? i.value.trim() : ""; }
+  // 오류 문구를 입력 칸의 설명으로 잇는다 — 포커스가 칸에 가면 화면낭독기가 이름·오류·문구를 같이 읽는다
+  var errN = 0;
+  function linkMsg(i, m) {
+    if (!m.id) m.id = (i.id || "f" + (++errN)) + "-err";
+    i.setAttribute("aria-invalid", "true"); i.setAttribute("aria-describedby", m.id);
+  }
   function setError(f, msg) {
     if (!f) return;
     f.classList.add("is-error");
-    var i = input(f); if (i) i.setAttribute("aria-invalid", "true");
-    var m = $(".field-msg", f);
+    var i = input(f), m = $(".field-msg", f);
     if (!m) { m = document.createElement("p"); m.className = "field-msg"; f.appendChild(m); }
     m.innerHTML = WARN; m.appendChild(document.createTextNode(msg));
-    if (i) i.focus({ preventScroll: true });
+    if (i) { linkMsg(i, m); i.focus({ preventScroll: true }); }
+    else m.setAttribute("role", "alert");          // 옮겨 갈 칸이 없으면 바로 읽어 준다
     f.scrollIntoView({ block: "center", behavior: "smooth" });
   }
   function clearError(f) {
     if (!f || !f.classList.contains("is-error")) return;
     f.classList.remove("is-error");
-    var i = input(f); if (i) i.removeAttribute("aria-invalid");
+    var i = input(f); if (i) { i.removeAttribute("aria-invalid"); i.removeAttribute("aria-describedby"); }
     var m = $(".field-msg", f); if (m) m.remove();
   }
+  // 오류 상태로 그려 둔 화면(--error)도 같은 방식으로 잇는다
+  $$(".field.is-error").forEach(function (f) { var i = input(f), m = $(".field-msg", f); if (i && m) linkMsg(i, m); });
   document.addEventListener("input", function (e) { var f = e.target.closest && e.target.closest(".field"); if (f) clearError(f); });
 
-  /* 시각 읽기: "오전 9시 30분" · "오후 12시" · "10:00" · "12:00 → 12:30"(마지막 값) */
-  function minutes(s) {
+  /* 시각 읽기: "오전 9시 30분" · "오후 12시" · "10:00" · "12:00 → 12:30"(마지막 값)
+     오전/오후 없이 1~7시로 적으면(“1시”, “1:00”) 병원·동행 시간대라 기준 시각(after)보다 이를 때 오후로 본다 */
+  function minutes(s, after) {
     s = (s || "").split("→").pop().trim();
-    var m = s.match(/(\d{1,2}):(\d{2})/);
-    if (m) return +m[1] * 60 + +m[2];
-    m = s.match(/(오전|오후)?\s*(\d{1,2})\s*시\s*(?:(\d{1,2})\s*분)?/);
-    if (!m) return null;
-    var h = +m[2] % 12; if (m[1] === "오후" || (!m[1] && +m[2] === 12)) h += 12;
-    return h * 60 + (+m[3] || 0);
+    var t, ampm = /오[전후]/.test(s), m = s.match(/(\d{1,2}):(\d{2})/);
+    if (m) t = +m[1] * 60 + +m[2];
+    else {
+      m = s.match(/(오전|오후)?\s*(\d{1,2})\s*시\s*(?:(\d{1,2})\s*분)?/);
+      if (!m) return null;
+      var h = +m[2] % 12; if (m[1] === "오후" || (!m[1] && +m[2] === 12)) h += 12;
+      t = h * 60 + (+m[3] || 0);
+    }
+    if (!ampm && after != null && t >= 60 && t < 8 * 60 && t < after) t += 720;
+    return t;
   }
   function hhmm(t) { return Math.floor(t / 60) + ":" + ("0" + (t % 60)).slice(-2); }
   function won(n) { return n.toLocaleString("ko-KR") + "원"; }
@@ -151,7 +164,7 @@
     "request-new": function () {
       var need = [["날짜", "날짜를 적어 주세요"], ["만남 시각", "만날 시각을 적어 주세요"], ["만남 장소", "만날 곳을 적어 주세요"], ["병원", "병원 이름을 적어 주세요"], ["진료 예약 시각", "진료 예약 시각을 적어 주세요"]];
       for (var i = 0; i < need.length; i++) if (!val(need[i][0])) return setError(field(need[i][0]), need[i][1]), false;
-      var meet = minutes(val("만남 시각")), appt = minutes(val("진료 예약 시각"));
+      var meet = minutes(val("만남 시각")), appt = minutes(val("진료 예약 시각"), meet);
       if (meet == null) return setError(field("만남 시각"), "‘오전 9시 30분’처럼 적어 주세요"), false;
       if (appt == null) return setError(field("진료 예약 시각"), "‘오전 10시’처럼 적어 주세요"), false;
       if (appt <= meet) return setError(field("진료 예약 시각"), "진료 예약이 만남 시각보다 빨라요"), false;
@@ -160,11 +173,12 @@
       return true;
     },
     "helper-change": function () {
-      var t = minutes(val("귀가 예상"));
+      var t = minutes(val("귀가 예상"), 720);
       if (t == null) return setError(field("귀가 예상"), "‘12:00 → 12:30’처럼 적어 주세요"), false;
       if (t <= 12 * 60) return setError(field("귀가 예상"), "원래 귀가 12:00보다 늦은 시각을 골라 주세요"), false;
       var reason = $(".chip.is-selected"); var ext = Math.ceil((t - 720) / 30) * 30;
-      save("extension", { reason: reason ? reason.textContent.trim() : "", memo: val("메모"), until: hhmm(t), minutes: ext, cost: ext / 30 * 9000, at: clock() });
+      // 요청마다 새 id — 보호자 승인은 이 id에만 붙는다(지난 요청의 승인이 새 요청에 보이지 않게)
+      save("extension", { id: Date.now(), reason: reason ? reason.textContent.trim() : "", memo: val("메모"), until: hhmm(t), minutes: ext, cost: ext / 30 * 9000, at: clock() });
       return true;
     },
     "dispute": function () {
@@ -192,7 +206,7 @@
       return true;
     },
     "booking-cancel": function () { var c = $(".chip.is-selected"); save("cancel", c ? c.textContent.trim() : ""); return true; },
-    "change-request": function () { save("approved", clock()); return true; },
+    "change-request": function () { var e = load("extension", null); save("approved", { id: e ? e.id : 0, at: clock() }); return true; },
     "helper-finish": function () {
       save("share", $$(".row").filter(function (r) { var s = $(".switch", r); return s && s.getAttribute("aria-checked") === "true"; })
         .map(function (r) { return { title: $(".row-title", r).textContent.trim(), sub: ($(".row-sub", r) || { textContent: "" }).textContent.trim() }; }));
@@ -206,7 +220,7 @@
   // 도우미 연장 요청: 귀가 예상을 고치면 추가 시간·비용이 바로 계산된다
   if (BASE === "helper-change") {
     var upd = function () {
-      var t = minutes(val("귀가 예상")), fT = input(field("추가 시간")), fC = input(field("추가 비용"));
+      var t = minutes(val("귀가 예상"), 720), fT = input(field("추가 시간")), fC = input(field("추가 비용"));
       if (!fT || !fC) return;
       if (t == null || t <= 720) { fT.value = "—"; fC.value = "—"; return; }
       var ext = Math.ceil((t - 720) / 30) * 30; fT.value = ext + "분"; fC.value = won(ext / 30 * 9000) + " (예시 요율)";
@@ -228,8 +242,10 @@
       });
     }
   }
-  if (PAGE === "change-request--done") { var ap = load("approved", null), d = $(".done"); if (ap && d && ex) d.textContent = ap + " 승인했어요 — 귀가 예상 " + ex.until; }
-  if (PAGE === "helper-change--done") { var d2 = $(".done"), ap2 = load("approved", null); if (d2 && ex) d2.textContent = ex.at + " 보냈어요 — " + (ap2 ? ap2 + " 김수진 님이 승인했어요" : "보호자 승인을 기다려요"); }
+  // 승인은 지금 연장 요청의 id와 같을 때만 '승인했어요'로 본다
+  var ap = load("approved", null), apNow = ex && ap && ap.id === ex.id ? ap.at : null;
+  if (PAGE === "change-request--done") { var d = $(".done"); if (d && apNow) d.textContent = apNow + " 승인했어요 — 귀가 예상 " + ex.until; }
+  if (PAGE === "helper-change--done") { var d2 = $(".done"); if (d2 && ex) d2.textContent = ex.at + " 보냈어요 — " + (apNow ? apNow + " 김수진 님이 승인했어요" : "보호자 승인을 기다려요"); }
 
   // 어머니 동의: 고른 값이 동의 완료 화면과 보호자 확인 화면에 그대로
   var consent = load("consent", null);
