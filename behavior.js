@@ -61,6 +61,18 @@
     else m.setAttribute("role", "alert");          // 옮겨 갈 칸이 없으면 바로 읽어 준다
     reveal(f);
   }
+  // 고르기(seg)는 입력 칸이 없어 묶음 바로 아래에 알리고, 하나를 고르면 지운다
+  function segError(seg, msg) {
+    var m = seg.nextElementSibling;
+    if (!m || !m.classList.contains("field-msg")) { m = document.createElement("p"); m.className = "field-msg"; seg.parentNode.insertBefore(m, seg.nextSibling); }
+    m.innerHTML = WARN; m.appendChild(document.createTextNode(msg)); m.setAttribute("role", "alert");
+    if (!m.id) m.id = "seg" + (++errN) + "-err";
+    seg.setAttribute("aria-invalid", "true"); seg.setAttribute("aria-describedby", m.id);
+  }
+  function clearSegError(seg) {
+    var m = seg.nextElementSibling; if (m && m.classList.contains("field-msg")) m.remove();
+    seg.removeAttribute("aria-invalid"); seg.removeAttribute("aria-describedby");
+  }
   function clearError(f) {
     if (!f || !f.classList.contains("is-error")) return;
     f.classList.remove("is-error");
@@ -163,7 +175,7 @@
     var sync = radioKeys(items);
     items.forEach(function (it) {
       it.type = "button";
-      it.addEventListener("click", function () { if (it.disabled) return; pick(it); sync(); remember(key, txt(it)); });
+      it.addEventListener("click", function () { if (it.disabled) return; pick(it); sync(); remember(key, txt(it)); clearSegError(seg); });
     });
   });
 
@@ -270,6 +282,8 @@
       return true;
     },
     "parent-consent": function () {
+      var open = $$(".seg").filter(function (s) { return !$(".seg-item.is-selected", s); });
+      if (open.length) { open.forEach(function (s) { segError(s, "좋아요·싫어요 중 하나를 골라 주세요"); }); $(".seg-item", open[0]).focus({ preventScroll: true }); reveal(open[0]); return false; }
       save("consent", $$(".seg").map(function (s) { return $$(".seg-item", s).findIndex(function (x) { return x.classList.contains("is-selected"); }); }));
       return true;
     },
@@ -332,7 +346,7 @@
   var cancel = load("cancel", null);
   if (cancel && /^(booking-cancel-done|booking-cancel-late-done|helper-cancelled)$/.test(PAGE)) $$(".row-sub").forEach(function (p) { if (p.textContent.indexOf("사유") === 0) p.textContent = "사유 · " + cancel; });
   var rv = load("review", null);
-  if (rv && PAGE === "review--done") { var pub = input(field("공개 후기")); if (pub) pub.value = rv.text; var rr = $(".rating"); if (rr) $$("button, svg", rr).forEach(function (s, i) { s.classList.toggle("is-on", i < rv.stars); }); }
+  if (rv && PAGE === "review--done") { var pub = input(field("공개 후기")); if (pub) pub.value = rv.text; var rr = $(".rating"); if (rr) { $$("button", rr).forEach(function (s, i) { s.classList.toggle("is-on", i < rv.stars); s.setAttribute("aria-checked", i === rv.stars - 1 ? "true" : "false"); }); rr.dataset.value = rv.stars; } }
 
   // 도우미 귀가 기록에서 켠 전달사항만 보호자 동행 기록에
   var share = load("share", null);

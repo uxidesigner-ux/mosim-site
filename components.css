@@ -255,7 +255,7 @@ textarea.input { height: auto; min-height: 120px; padding: var(--stack-s) var(--
 
 .stage .progress { margin-top: var(--stack-m); }
 .stage-labels { display: flex; justify-content: space-between; margin-top: var(--stack-s); font-size: var(--fs-caption); color: var(--c-text-2); }
-.stage-labels .is-now { color: var(--c-brand); }
+.stage-labels .is-now { color: var(--c-brand-text); }
 .chips.is-wrap { flex-wrap: wrap; overflow-x: visible; }
 .row-art.is-line { width: 44px; height: 44px; border-radius: var(--r-pill); background: var(--c-brand-tint); color: var(--c-brand-tint-text); }
 .row-art.is-line svg { width: 22px; height: 22px; }
